@@ -60,7 +60,7 @@
         .menu-card {
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
-            padding: 2.5rem;
+            padding: 2rem;
             border-radius: 2rem;
             border: 1px solid #e2e8f0;
             text-align: center;
@@ -102,17 +102,17 @@
 
         .stats-container {
             position: absolute;
-            top: 30px;
-            left: 30px;
+            top: 20px;
+            left: 20px;
             display: flex;
-            gap: 15px;
+            gap: 10px;
             pointer-events: none;
         }
 
         .settings-container {
             position: absolute;
-            top: 30px;
-            right: 30px;
+            top: 20px;
+            right: 20px;
             display: flex;
             gap: 10px;
             z-index: 100;
@@ -120,7 +120,7 @@
 
         .stat-box, .audio-toggle {
             background: rgba(255,255,255,0.9);
-            padding: 8px 15px;
+            padding: 8px 12px;
             border-radius: 12px;
             border: 1px solid #e2e8f0;
             display: flex;
@@ -140,7 +140,6 @@
 
         .audio-toggle:active {
             transform: scale(0.95);
-            background: #f8fafc;
         }
 
         .audio-toggle.muted {
@@ -149,17 +148,40 @@
         }
 
         .stat-label {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             text-transform: uppercase;
             color: #64748b;
             font-weight: 700;
         }
 
         .stat-value {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 800;
             color: #1e293b;
             line-height: 1;
+        }
+
+        /* ORIENTATION NOTICE */
+        #orientation-notice {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media (orientation: portrait) and (max-width: 1024px) {
+            #orientation-notice {
+                display: flex;
+            }
         }
 
         #intermission-overlay {
@@ -179,7 +201,7 @@
         }
 
         #level-status {
-            font-size: 4rem;
+            font-size: 3rem;
             font-weight: 900;
             color: #0ea5e9;
             text-transform: uppercase;
@@ -187,13 +209,22 @@
         }
 
         #countdown {
-            font-size: 2.5rem;
+            font-size: 1.5rem;
             font-weight: 800;
             color: #64748b;
         }
     </style>
 </head>
 <body>
+
+<!-- Portrait Lock Notice -->
+<div id="orientation-notice">
+    <div class="animate-bounce mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+    </div>
+    <h2 class="text-2xl font-black text-slate-800 mb-2">LANDSCAPE MODE REQUIRED</h2>
+    <p class="text-slate-500 italic">Please rotate your device to run and jump to success!</p>
+</div>
 
 <div id="game-container">
     <canvas id="gameCanvas"></canvas>
@@ -208,30 +239,29 @@
     <!-- GLOBAL AUDIO CONTROLS (Top Right) -->
     <div class="settings-container" id="global-settings">
         <div class="audio-toggle" id="toggle-music-btn" title="Toggle Music" onclick="toggleMusic()">
-            <svg id="music-on-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-600"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-            <svg id="music-off-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 hidden"><line x1="2" y1="2" x2="22" y2="22"></line><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+            <svg id="music-on-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-600"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+            <svg id="music-off-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 hidden"><line x1="2" y1="2" x2="22" y2="22"></line><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
         </div>
         <div class="audio-toggle" id="toggle-sfx-btn" title="Toggle SFX" onclick="toggleSFX()">
-            <svg id="sfx-on-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-600"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
-            <svg id="sfx-off-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 hidden"><line x1="2" y1="2" x2="22" y2="22"></line><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
+            <svg id="sfx-on-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-600"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+            <svg id="sfx-off-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 hidden"><line x1="2" y1="2" x2="22" y2="22"></line><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
         </div>
     </div>
 
     <!-- MAIN MENU -->
     <div class="ui-overlay" id="main-menu">
         <div class="menu-card">
-            <!-- Game Logo -->
-            <img src="https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/Game%20Logo.png" alt="Run Ollie Run Logo" class="w-48 mx-auto mb-4 drop-shadow-md">
+            <img src="https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/Game%20Logo.png" alt="Run Ollie Run Logo" class="w-40 mx-auto mb-4 drop-shadow-md">
             
-            <h1 class="text-4xl font-black text-slate-800 mb-1">RUN OLLIE RUN</h1>
-            <p class="text-slate-500 mb-8 italic">run and jump to success</p>
+            <h1 class="text-3xl font-black text-slate-800 mb-1">RUN OLLIE RUN</h1>
+            <p class="text-slate-500 mb-6 italic text-sm">run and jump to success</p>
             
-            <div id="loader-text" class="text-sky-600 font-bold animate-pulse mb-4">PREPARING LESSON...</div>
+            <div id="loader-text" class="text-sky-600 font-bold animate-pulse mb-4 text-sm">PREPARING LESSONS...</div>
             
-            <div id="menu-actions" class="hidden flex flex-col gap-4">
-                <button class="btn" onclick="startGame()">START CLASS</button>
-                <button class="btn btn-secondary" onclick="showInstructions()">HOW TO PLAY</button>
-                <button class="btn btn-secondary" onclick="showCredits()">CREDITS</button>
+            <div id="menu-actions" class="hidden flex flex-col gap-3">
+                <button class="btn text-sm" onclick="startGame()">START CLASS</button>
+                <button class="btn btn-secondary text-sm" onclick="showInstructions()">HOW TO PLAY</button>
+                <button class="btn btn-secondary text-sm" onclick="showCredits()">CREDITS</button>
             </div>
         </div>
     </div>
@@ -239,102 +269,90 @@
     <!-- INSTRUCTIONS SCREEN -->
     <div class="ui-overlay hidden" id="instructions-screen">
         <div class="menu-card">
-            <h2 class="text-2xl font-black text-slate-800 mb-4 border-b pb-2">HOW TO PLAY</h2>
+            <h2 class="text-xl font-black text-slate-800 mb-4 border-b pb-2">HOW TO PLAY</h2>
             
-            <div class="text-left space-y-5 mb-8">
-                <div class="flex gap-4 items-start">
-                    <div class="bg-sky-100 p-2 rounded-lg text-sky-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            <div class="text-left space-y-4 mb-6">
+                <div class="flex gap-3 items-start">
+                    <div class="bg-sky-100 p-2 rounded-lg text-sky-600 shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
                     </div>
                     <div>
-                        <p class="font-bold text-slate-800">Jump to Dodge</p>
-                        <p class="text-sm text-slate-500">Press <b>SPACE</b>, <b>Arrow Up</b>, or <b>Click/Tap</b> to leap over the incoming grades.</p>
+                        <p class="font-bold text-slate-800 text-sm">Jump to Dodge</p>
+                        <p class="text-xs text-slate-500">Tap the screen, or use <b>SPACE/UP</b> to leap over incoming grades.</p>
                     </div>
                 </div>
 
-                <div class="flex gap-4 items-start">
-                    <div class="bg-amber-100 p-2 rounded-lg text-amber-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                <div class="flex gap-3 items-start">
+                    <div class="bg-amber-100 p-2 rounded-lg text-amber-600 shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
                     </div>
                     <div>
-                        <p class="font-bold text-slate-800">Improve Your Grade</p>
-                        <p class="text-sm text-slate-500">Survive through the levels to climb from F to the ultimate <b>A+</b> grade!</p>
-                    </div>
-                </div>
-
-                <div class="flex gap-4 items-start">
-                    <div class="bg-emerald-100 p-2 rounded-lg text-emerald-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9 2 9 2 15 6 15 11 19 11 5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-                    </div>
-                    <div>
-                        <p class="font-bold text-slate-800">Audio Settings</p>
-                        <p class="text-sm text-slate-500">Use the icons in the <b>top-right corner</b> to toggle the Music and SFX on or off anytime.</p>
+                        <p class="font-bold text-slate-800 text-sm">Improve Your Grade</p>
+                        <p class="text-xs text-slate-500">Survive through levels to climb from F to the ultimate <b>A+</b> grade!</p>
                     </div>
                 </div>
             </div>
 
-            <button class="btn btn-secondary" onclick="showMainMenu()">GOT IT</button>
+            <button class="btn btn-secondary text-sm" onclick="showMainMenu()">GOT IT</button>
         </div>
     </div>
 
     <!-- CREDITS SCREEN -->
     <div class="ui-overlay hidden" id="credits-screen">
         <div class="menu-card">
-            <h2 class="text-2xl font-black text-slate-800 mb-6 border-b pb-2">CREDITS</h2>
+            <h2 class="text-xl font-black text-slate-800 mb-4 border-b pb-2">CREDITS</h2>
             
-            <div class="text-left space-y-4 mb-6">
+            <div class="text-left space-y-3 mb-6">
                 <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase">Character Design</p>
-                    <p class="text-slate-700 font-bold">Kor Chun Heng</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Character Design</p>
+                    <p class="text-slate-700 font-bold text-sm">Kor Chun Heng</p>
                 </div>
                 <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase">Vibe Coder</p>
-                    <p class="text-slate-700 font-bold">Alfie Yang</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Vibe Coder</p>
+                    <p class="text-slate-700 font-bold text-sm">Alfie Yang</p>
                 </div>
                 <div>
-                    <p class="text-xs font-bold text-slate-400 uppercase">Music</p>
-                    <p class="text-slate-700 font-bold">"Ollie" by <a href="https://music.youtube.com/channel/UCOX1F9tEIAPWEf9VbB8uUgQ" target="_blank" class="text-sky-600 underline hover:text-sky-700">Yang Ha-Eun</a></p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Music</p>
+                    <p class="text-slate-700 font-bold text-sm">"Ollie" by <a href="https://open.spotify.com/artist/1OmoKEJt3I1xxK1RrCYual" target="_blank" class="text-sky-600 underline">Yang Ha-Eun</a></p>
                 </div>
                 
-                <div class="pt-4 border-t border-slate-100">
-                    <p class="text-xs font-bold text-sky-600 uppercase mb-2">Good School Learning Hub</p>
-                    <p class="text-xs text-slate-600 mb-1"><b>Call & Whatsapp:</b> 9424 4449</p>
-                    <p class="text-xs text-slate-600 mb-1"><b>Email:</b> goodschoollearninghub@gmail.com</p>
-                    <p class="text-xs text-slate-600 mb-1"><b>Website:</b> <a href="https://www.goodschool.com.sg/" target="_blank" class="text-sky-600 underline hover:text-sky-700">www.goodschool.com.sg</a></p>
-                    <p class="text-xs text-slate-600 mb-1"><b>Facebook:</b> <a href="https://www.facebook.com/GoodSchoolLearningHub/" target="_blank" class="text-sky-600 underline hover:text-sky-700">GoodSchoolLearningHub</a></p>
-                    <p class="text-xs text-slate-600"><b>Instagram:</b> <a href="https://www.instagram.com/goodschoollearninghub/" target="_blank" class="text-sky-600 underline hover:text-sky-700">@goodschoollearninghub</a></p>
+                <div class="pt-3 border-t border-slate-100">
+                    <p class="text-[10px] font-bold text-sky-600 uppercase mb-1">Good School Learning Hub</p>
+                    <p class="text-[11px] text-slate-600"><b>Call/WA:</b> 9424 4449</p>
+                    <p class="text-[11px] text-slate-600"><b>Website:</b> <a href="https://www.goodschool.com.sg/" target="_blank" class="text-sky-600 underline">www.goodschool.com.sg</a></p>
+                    <p class="text-[11px] text-slate-600"><b>Insta:</b> <a href="https://www.instagram.com/goodschoollearninghub/" target="_blank" class="text-sky-600 underline">@goodschoollearninghub</a></p>
                 </div>
             </div>
 
-            <button class="btn btn-secondary" onclick="showMainMenu()">BACK</button>
+            <button class="btn btn-secondary text-sm" onclick="showMainMenu()">BACK</button>
         </div>
     </div>
 
     <!-- GAME OVER SCREEN -->
     <div class="ui-overlay hidden" id="game-over">
         <div class="menu-card">
-            <h2 class="text-3xl font-bold text-slate-800 mb-2">Study Break!</h2>
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Study Break!</h2>
             
             <div id="final-grade-container" class="mb-4">
-                <p class="text-xs text-slate-400 font-bold uppercase mb-1">Grade Attained</p>
-                <div id="final-grade-text" class="text-7xl font-black mb-2">F</div>
-                <p id="final-congrats" class="text-slate-600 font-medium italic px-4 text-sm">Work harder, you can do this!</p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Grade Attained</p>
+                <div id="final-grade-text" class="text-6xl font-black mb-1">F</div>
+                <p id="final-congrats" class="text-slate-600 font-medium italic px-4 text-xs">Work harder, you can do this!</p>
             </div>
 
-            <div class="flex justify-center gap-8 mb-6 border-t border-slate-100 pt-4">
+            <div class="flex justify-center gap-6 mb-4 border-t border-slate-100 pt-3">
                 <div class="text-center">
-                    <p class="text-xs text-slate-400 font-bold uppercase">Final Level</p>
-                    <p class="text-2xl font-black text-slate-700" id="final-level">1</p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase">Level</p>
+                    <p class="text-xl font-black text-slate-700" id="final-level">1</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-xs text-slate-400 font-bold uppercase">Total Score</p>
-                    <p class="text-2xl font-black text-sky-600" id="final-score">0</p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase">Score</p>
+                    <p class="text-xl font-black text-sky-600" id="final-score">0</p>
                 </div>
             </div>
             
-            <div class="flex flex-col gap-3">
-                <button class="btn" onclick="startGame()">TRY AGAIN</button>
-                <button class="btn btn-secondary" onclick="showMainMenu()">MAIN MENU</button>
+            <div class="flex flex-col gap-2">
+                <button class="btn text-sm" onclick="startGame()">TRY AGAIN</button>
+                <button class="btn btn-secondary text-sm" onclick="showMainMenu()">MAIN MENU</button>
             </div>
         </div>
     </div>
@@ -386,7 +404,6 @@
     let musicEnabled = true;
     let sfxEnabled = true;
 
-    // AUDIO OBJECTS
     const jumpSound = new Audio(JUMP_SOUND_URL);
     jumpSound.crossOrigin = "anonymous";
     jumpSound.preload = "auto";
@@ -458,88 +475,15 @@
 
     function getGradeInfo(level) {
         const grades = {
-            F: { 
-                text: "F", color: "#ef4444", width: 45, 
-                msgs: [
-                    "Work harder! Success is a ladder you must climb.",
-                    "Don't give up! Every failure is a step toward success.",
-                    "Believe in yourself! You have what it takes to improve.",
-                    "Mistakes are lessons. Learn from this one!",
-                    "A fresh start is just a click away. Try again!"
-                ] 
-            },
-            E: { 
-                text: "E", color: "#f97316", width: 45, 
-                msgs: [
-                    "Focus more! You're just getting started.",
-                    "Keep pushing! You're breaking through the basics.",
-                    "Stay determined. Progress is happening!",
-                    "Every scholar starts somewhere. Keep going.",
-                    "You've got the foundation, now build on it!"
-                ] 
-            },
-            D: { 
-                text: "D", color: "#f59e0b", width: 45, 
-                msgs: [
-                    "Keep practicing! You're moving in the right direction.",
-                    "Getting better! Your effort is starting to show.",
-                    "Consistency is key. You're climbing the ranks!",
-                    "Not bad! Let's aim for a C next time.",
-                    "You've got rhythm now. Stay focused!"
-                ] 
-            },
-            C: { 
-                text: "C", color: "#fbbf24", width: 45, 
-                msgs: [
-                    "Solid effort! Now aim for the Dean's List.",
-                    "You're halfway to perfection! Great job.",
-                    "A solid average, but we know you can be extraordinary!",
-                    "You've mastered the core. Time to shine!",
-                    "Keep that momentum going. You're doing great!"
-                ] 
-            },
-            B: { 
-                text: "B", color: "#84cc16", width: 45, 
-                msgs: [
-                    "Good job! A little more study and you'll hit an A.",
-                    "Impressive! You're clearly putting in the work.",
-                    "So close to excellence! One more push!",
-                    "You're outperforming the crowd. Keep it up.",
-                    "Academic excellence is right around the corner!"
-                ] 
-            },
-            A: { 
-                text: "A", color: "#10b981", width: 45, 
-                msgs: [
-                    "Excellent! You are truly a scholar.",
-                    "Brilliant performance! You make it look easy.",
-                    "Top-tier work! Your dedication is inspiring.",
-                    "You've reached the heights of academia!",
-                    "Simply outstanding. A true role model!"
-                ] 
-            },
-            A_MINUS: { 
-                text: "A-", color: "#06b6d4", width: 60, 
-                msgs: [
-                    "Outstanding! Perfection is within your reach.",
-                    "Almost perfect! Your skills are sharp.",
-                    "Exceptional talent on display here.",
-                    "You're in the elite tier now. Keep at it!",
-                    "Incredible focus. You're nearly at the top!"
-                ] 
-            },
-            A_PLUS: { 
-                text: "A+", color: "#8b5cf6", width: 65, 
-                msgs: [
-                    "Masterpiece! You've conquered the curriculum!",
-                    "Absolute perfection! There is nothing left to teach you.",
-                    "Legendary status attained! The ultimate scholar.",
-                    "You've transcended the limits of the game!",
-                    "Perfection personified. You are the Grad Master!"
-                ] 
-            }
+            F: { text: "F", color: "#ef4444", width: 45, msgs: ["Work harder! Success is a ladder you must climb.", "Don't give up! Every failure is a step toward success.", "Believe in yourself! You have what it takes to improve.", "Mistakes are lessons. Learn from this one!", "A fresh start is just a click away. Try again!"] },
+            E: { text: "E", color: "#f97316", width: 45, msgs: ["Focus more! You're just getting started.", "Keep pushing! You're breaking through the basics.", "Stay determined. Progress is happening!", "Every scholar starts somewhere. Keep going.", "You've got the foundation, now build on it!"] },
+            D: { text: "D", color: "#f59e0b", width: 45, msgs: ["Keep practicing! You're moving in the right direction.", "Getting better! Your effort is starting to show.", "Consistency is key. You're climbing the ranks!", "Not bad! Let's aim for a C next time.", "You've got rhythm now. Stay focused!"] },
+            C: { text: "C", color: "#fbbf24", width: 45, msgs: ["Solid effort! Now aim for the Dean's List.", "You're halfway to perfection! Great job.", "A solid average, but we know you can be extraordinary!", "You've mastered the core. Time to shine!", "Keep that momentum going. You're doing great!"] },
+            B: { text: "B", color: "#84cc16", width: 45, msgs: ["Good job! A little more study and you'll hit an A.", "Impressive! You're clearly putting in the work.", "So close to excellence! One more push!", "You're outperforming the crowd. Keep it up.", "Academic excellence is right around the corner!"] },
+            A: { text: "A", color: "#10b981", width: 45, msgs: ["Excellent! You are truly a scholar.", "Brilliant performance! You make it look easy.", "Top-tier work! Your dedication is inspiring.", "You've reached the heights of academia!", "Simply outstanding. A true role model!"] },
+            A_MINUS: { text: "A-", color: "#06b6d4", width: 60, msgs: ["Outstanding! Perfection is within your reach.", "Almost perfect! Your skills are sharp.", "Exceptional talent on display here.", "You're in the elite tier now. Keep at it!", "Incredible focus. You're nearly at the top!"] },
+            A_PLUS: { text: "A+", color: "#8b5cf6", width: 65, msgs: ["Masterpiece! You've conquered the curriculum!", "Absolute perfection! There is nothing left to teach you.", "Legendary status attained! The ultimate scholar.", "You've transcended the limits of the game!", "Perfection personified. You are the Grad Master!"] }
         };
-
         if (level <= 2) return grades.F;
         if (level <= 4) return grades.E;
         if (level <= 6) return grades.D;
@@ -553,13 +497,12 @@
     class Player {
         constructor() { this.reset(); }
         reset() {
-            this.width = 120;
-            this.height = 120;
+            this.width = 100;
+            this.height = 100;
             this.x = 100;
             this.y = canvas.height - GROUND_Y_OFFSET - this.height;
             this.vy = 0;
             this.isJumping = false;
-            
             playerGif.src = GIF_URL;
             playerGif.style.width = `${this.width}px`;
             playerGif.style.height = `${this.height}px`;
@@ -600,7 +543,7 @@
             this.text = gradeInfo.text;
             this.color = gradeInfo.color;
             this.width = gradeInfo.width;
-            this.height = 60; 
+            this.height = 50; 
             this.x = canvas.width;
             this.y = canvas.height - GROUND_Y_OFFSET - this.height - 10;
             this.rotation = (Math.random() - 0.5) * 0.2; 
@@ -613,7 +556,7 @@
             ctx.shadowBlur = 10;
             ctx.shadowColor = this.color + "66";
             ctx.fillStyle = this.color;
-            ctx.font = "900 60px 'Outfit'";
+            ctx.font = "900 50px 'Outfit'";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText(this.text, 0, 0);
@@ -663,16 +606,16 @@
         jumpSound.play().then(() => {
             jumpSound.pause();
             jumpSound.currentTime = 0;
-        }).catch(e => console.log("Silent start unlock fail:", e.message));
+        }).catch(e => {});
 
         if (musicEnabled) {
-            bgMusic.play().catch(e => console.warn("Music play blocked:", e.message));
+            bgMusic.play().catch(e => {});
         }
 
         gameState = 'PLAYING';
         score = 0;
         currentLevel = 1;
-        gameSpeed = 6;
+        gameSpeed = 6.5;
         obstacles = [];
         player.reset();
         
@@ -732,6 +675,9 @@
 
     function update() {
         if (gameState === 'MENU' || gameState === 'CREDITS' || gameState === 'INSTRUCTIONS') return;
+        
+        // Don't update logic if orientation is portrait on small screens
+        if (window.innerHeight > window.innerWidth && window.innerWidth <= 1024) return;
 
         player.update();
         if (gameState === 'INTERMISSION') {
@@ -750,24 +696,27 @@
             startIntermission();
             return;
         }
+        
+        // Smoothly increase speed
         if (currentLevel < 10) {
-            gameSpeed = 6 + (currentLevel * 0.15); 
-            var spawnGap = 130 - (currentLevel * 2); 
+            gameSpeed = 6.5 + (currentLevel * 0.15); 
+            var spawnGap = 110 - (currentLevel * 2); 
         } else {
-            const difficultyMultiplier = (currentLevel - 10) * 0.5;
-            gameSpeed = 9 + difficultyMultiplier; 
-            var spawnGap = Math.max(35, 80 - (difficultyMultiplier * 5)); 
+            const extra = (currentLevel - 10) * 0.5;
+            gameSpeed = 9 + extra; 
+            var spawnGap = Math.max(30, 75 - (extra * 5)); 
         }
+
         frameCount++;
         if (frameCount % Math.floor(spawnGap) === 0) {
             obstacles.push(new Obstacle(currentLevel));
         }
         for (let i = obstacles.length - 1; i >= 0; i--) {
             obstacles[i].update();
-            if (player.x + 40 < obstacles[i].x + obstacles[i].width &&
-                player.x + player.width - 40 > obstacles[i].x &&
-                player.y + 40 < obstacles[i].y + obstacles[i].height &&
-                player.y + player.height - 15 > obstacles[i].y) {
+            if (player.x + 30 < obstacles[i].x + obstacles[i].width &&
+                player.x + player.width - 30 > obstacles[i].x &&
+                player.y + 30 < obstacles[i].y + obstacles[i].height &&
+                player.y + player.height - 10 > obstacles[i].y) {
                 gameOver();
             }
             if (obstacles[i].x < -200) obstacles.splice(i, 1);
@@ -807,7 +756,10 @@
     window.addEventListener('keydown', (e) => { if (e.code === 'Space' || e.code === 'ArrowUp') handleAction(); });
     window.addEventListener('mousedown', handleAction);
     window.addEventListener('touchstart', handleAction);
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', () => {
+        resize();
+        if (gameState === 'MENU') draw();
+    });
 
     function checkReady() {
         if (playerGif.complete && jumpImg.complete) {
