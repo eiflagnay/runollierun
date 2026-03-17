@@ -275,13 +275,6 @@
                         <p class="text-xs text-slate-500">Survive levels to climb from F to the ultimate <b>A+</b> grade!</p>
                     </div>
                 </div>
-                <div class="flex gap-3 items-start">
-                    <div class="bg-emerald-100 p-2 rounded-lg text-emerald-600 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9 2 9 2 15 6 15 11 19 11 5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></div>
-                    <div>
-                        <p class="font-bold text-slate-800 text-sm">Audio & Screen Settings</p>
-                        <p class="text-xs text-slate-500">Use the icons in the <b>top-right</b> to toggle Music, SFX, or <b>Fullscreen</b> anytime.</p>
-                    </div>
-                </div>
             </div>
             <button class="btn btn-secondary text-sm" onclick="showMainMenu()">GOT IT</button>
         </div>
@@ -564,9 +557,8 @@
         const rx = Math.round(x);
         const ry = Math.round(y);
         ctx.fillStyle = '#78350f'; // Trunk
-        // ry is already offset in draw() to align top, so rx+offset, ry+trunk_offset
         ctx.fillRect(rx + (10 * s), ry + (20 * s), 12 * s, 35 * s);
-        ctx.fillStyle = '#22c55e'; // Vibrant green
+        ctx.fillStyle = '#22c55e'; // Green foliage
         ctx.beginPath();
         ctx.moveTo(rx - (22 * s), ry + (20 * s));
         ctx.lineTo(rx + (16 * s), ry - (25 * s));
@@ -623,11 +615,17 @@
         if (score >= currentLevel * POINTS_PER_LEVEL) { startIntermission(); return; }
         
         let spawnGap, targetSpeed;
-        if (currentLevel < 5) { targetSpeed = 6.5 + (currentLevel * 0.2); spawnGap = 110 - (currentLevel * 3); }
-        else if (currentLevel < 10) { targetSpeed = 7.5 + ((currentLevel - 4) * 0.6); spawnGap = 95 - ((currentLevel - 4) * 8); }
-        else {
-            targetSpeed = 11.5 + ((currentLevel - 10) * 0.67);
-            spawnGap = Math.max(24, 47.5 - ((currentLevel - 10) * 3.3));
+        if (currentLevel < 5) {
+            targetSpeed = 6.5 + (currentLevel * 0.2);
+            spawnGap = 110 - (currentLevel * 3);
+        } else if (currentLevel < 10) {
+            targetSpeed = 7.5 + ((currentLevel - 4) * 0.6);
+            spawnGap = 95 - ((currentLevel - 4) * 8);
+        } else {
+            // Level 10 difficulty scaled down by ANOTHER 5% (Total ~10% reduction from original extreme)
+            // Speed increment reduced, starting speed for level 10 reduced.
+            targetSpeed = 10.9 + ((currentLevel - 10) * 0.63);
+            spawnGap = Math.max(25, 50.0 - ((currentLevel - 10) * 3.1));
         }
         
         gameSpeed = targetSpeed;
@@ -643,10 +641,9 @@
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Ground Y position
         const groundY = Math.round(canvas.height - GROUND_Y_OFFSET);
 
-        // Draw Parallax BG
+        // Parallax drawing snapping all elements to integer coordinates
         parallaxLayers.forEach(layer => {
             if (layer.type === 'clouds') {
                 const gap = 600;
@@ -655,8 +652,6 @@
                 }
             } else if (layer.type === 'trees') {
                 const gap = 380;
-                // Offset ry so the base (y + 55*s) aligns with groundY
-                // Base at 55*s = 60.5. So ry = groundY - 60.5
                 const ry = groundY - 60.5;
                 for (let x = Math.round(layer.x); x < canvas.width + gap; x += gap) {
                     drawTree(x, ry);
