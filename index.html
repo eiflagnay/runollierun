@@ -33,10 +33,14 @@
 
         #player-gif {
             position: absolute;
+            /* Pin to top-left of container so translate(x, y) matches canvas coordinates */
+            top: 0;
+            left: 0;
             pointer-events: none;
             z-index: 10;
             display: none;
-            image-rendering: pixelated; /* Optional: keeps it crisp if it's pixel art */
+            image-rendering: auto;
+            transform-origin: top left;
         }
 
         .ui-overlay {
@@ -129,7 +133,7 @@
     /** * MANUALLY ADD YOUR URL HERE 
      * Paste your hosted GIF link between the quotes below.
      */
-    const GIF_URL = "https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/Video_Conversion_To_GIF.gif"; 
+    const GIF_URL = "https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/runollie.gif"; 
 
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -188,6 +192,7 @@
             }
 
             // Sync GIF position with internal logic
+            // Use scale to give that extra "squash and stretch" effect
             const scaleY = this.isJumping ? 1.08 : 1.0;
             const scaleX = 2 - scaleY;
             
@@ -196,7 +201,6 @@
         }
         draw() {
             // Player is now drawn via DOM element (playerGif) to allow GIF animation
-            // No need for ctx.drawImage here
         }
     }
 
