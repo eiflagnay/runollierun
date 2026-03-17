@@ -12,7 +12,7 @@
             font-family: 'Outfit', sans-serif;
             margin: 0;
             overflow: hidden;
-            background-color: #ffffff;
+            background-color: #f0f9ff; /* Light sky blue */
             touch-action: manipulation;
         }
 
@@ -23,12 +23,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #ffffff;
         }
 
         canvas {
             display: block;
-            background: #ffffff;
+            background: linear-gradient(to bottom, #e0f2fe, #ffffff);
             image-rendering: auto;
         }
 
@@ -75,7 +74,6 @@
             scrollbar-width: thin;
         }
 
-        /* Container to allow side-by-side layout in landscape */
         .menu-content-wrapper {
             display: flex;
             flex-direction: column;
@@ -83,7 +81,7 @@
             width: 100%;
         }
 
-        /* Landscape Optimization for mobile browsers */
+        /* Landscape Optimization */
         @media (max-height: 450px) {
             .menu-card { 
                 padding: 1rem 2rem; 
@@ -113,24 +111,11 @@
             }
 
             .menu-card h1 { font-size: 1.5rem !important; margin-bottom: 0.1rem !important; }
-            .menu-card h2 { font-size: 1.25rem !important; margin-bottom: 0.5rem !important; }
             .menu-card p { font-size: 0.7rem !important; margin-bottom: 0.25rem !important; }
-            
-            /* Logo is now much bigger in landscape side-by-side */
-            .menu-card .main-logo { 
-                width: 140px !important; 
-                margin-bottom: 0.5rem !important; 
-            }
-
-            .btn { 
-                padding: 0.6rem 1rem !important; 
-                font-size: 0.75rem !important;
-                margin-bottom: 0.5rem;
-            }
-
+            .menu-card .main-logo { width: 130px !important; margin-bottom: 0.5rem !important; }
+            .btn { padding: 0.6rem 1rem !important; font-size: 0.75rem !important; margin-bottom: 0.5rem; }
             .stats-container, .settings-container { top: 10px !important; }
             #final-grade-text { font-size: 3rem !important; line-height: 1 !important; }
-            #final-grade-container { margin-bottom: 0.5rem !important; }
         }
 
         .btn {
@@ -150,7 +135,6 @@
 
         .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #0369a1; }
         .btn-secondary { background: #f1f5f9; color: #475569; box-shadow: 0 6px 0 #cbd5e1; }
-        .btn-secondary:active { box-shadow: 0 2px 0 #cbd5e1; }
 
         .stats-container { position: absolute; top: 20px; left: 20px; display: flex; gap: 10px; pointer-events: none; }
         .settings-container { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 100; }
@@ -189,7 +173,7 @@
             padding: 20px;
         }
 
-        @media (orientation: portrait) and (max-width: 1024px) and (pointer: coarse) {
+        @media (orientation: portrait) and (max-width: 1024px) {
             #orientation-notice { display: flex; }
         }
 
@@ -223,14 +207,14 @@
     <p class="text-slate-500 italic">Please rotate your device to run and jump to success!</p>
 </div>
 
-<!-- Ollie Image Sources for Canvas (though we use playerImg for animation) -->
+<!-- Preloaded Assets -->
 <img id="ollie-run-source" src="https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/OllieRun.webp" crossorigin="anonymous" style="display:none">
 <img id="ollie-jump-source" src="https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/JumpOllie.png" crossorigin="anonymous" style="display:none">
 
 <div id="game-container">
     <canvas id="gameCanvas"></canvas>
     
-    <!-- Animated Ollie (DOM element for WebP animation support) -->
+    <!-- Animated Ollie -->
     <img id="player-gif" src="https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/OllieRun.webp" alt="Ollie">
     
     <div id="intermission-overlay">
@@ -418,67 +402,31 @@
     function toggleFullScreen() {
         const doc = window.document;
         const docEl = doc.documentElement;
-
         const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
         const cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-        const enterIcon = document.getElementById('fs-enter-icon');
-        const exitIcon = document.getElementById('fs-exit-icon');
-        const btn = document.getElementById('toggle-fullscreen-btn');
-
         if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-            if (requestFullScreen) {
-                requestFullScreen.call(docEl).catch(() => {});
-                enterIcon.classList.add('hidden');
-                exitIcon.classList.remove('hidden');
-                btn.classList.remove('muted');
-            }
+            if (requestFullScreen) requestFullScreen.call(docEl).catch(() => {});
         } else {
-            if (cancelFullScreen) {
-                cancelFullScreen.call(doc).catch(() => {});
-                enterIcon.classList.remove('hidden');
-                exitIcon.classList.add('hidden');
-                btn.classList.add('muted');
-            }
+            if (cancelFullScreen) cancelFullScreen.call(doc).catch(() => {});
         }
-    }
-
-    // Sync icons on browser-driven fullscreen changes
-    function syncFullScreenUI() {
-        const doc = window.document;
-        const isFS = !!(doc.fullscreenElement || doc.mozFullScreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement);
-        const enterIcon = document.getElementById('fs-enter-icon');
-        const exitIcon = document.getElementById('fs-exit-icon');
-        const btn = document.getElementById('toggle-fullscreen-btn');
-        if (isFS) {
-            enterIcon.classList.add('hidden');
-            exitIcon.classList.remove('hidden');
-            btn.classList.remove('muted');
-        } else {
-            enterIcon.classList.remove('hidden');
-            exitIcon.classList.add('hidden');
-            btn.classList.add('muted');
-        }
-    }
-    document.addEventListener('fullscreenchange', syncFullScreenUI);
-    document.addEventListener('webkitfullscreenchange', syncFullScreenUI);
-    document.addEventListener('mozfullscreenchange', syncFullScreenUI);
-    document.addEventListener('MSFullscreenChange', syncFullScreenUI);
-
-    function playJumpSound() {
-        if (!sfxEnabled || !jumpSound) return;
-        jumpSound.pause(); jumpSound.currentTime = 0;
-        jumpSound.play().catch(e => {});
     }
 
     let animationId, gameState = 'MENU', score = 0, currentLevel = 1, gameSpeed = 6.5, obstacles = [], intermissionTimer = 0;
     let lastTime = 0, spawnCounter = 0, uiUpdateCounter = 0;
+    
+    // Background Elements
+    let speedParticles = [];
+    let parallaxLayers = [
+        { x: 0, speed: 0.15, type: 'clouds' },
+        { x: 0, speed: 0.6, type: 'trees' },
+        { x: 0, speed: 1.2, type: 'floor' }
+    ];
 
     const GRAVITY = 0.65, JUMP_FORCE = -15.5, GROUND_Y_OFFSET = 120, POINTS_PER_LEVEL = 150; 
 
     function getGradeInfo(level) {
         const grades = {
-            F: { text: "F", color: "#ef4444", msgs: ["Work harder! Success is a ladder.", "Don't give up!", "Mistakes are lessons."] },
+            F: { text: "F", color: "#ef4444", msgs: ["Work harder!", "Don't give up!", "Mistakes are lessons."] },
             E: { text: "E", color: "#f97316", msgs: ["Focus more!", "Keep pushing!"] },
             D: { text: "D", color: "#f59e0b", msgs: ["Keep practicing!", "Getting better!"] },
             C: { text: "C", color: "#fbbf24", msgs: ["Solid effort!", "Aiming higher!"] },
@@ -512,7 +460,7 @@
             if (!this.isJumping && (gameState === 'PLAYING' || gameState === 'INTERMISSION')) {
                 this.vy = JUMP_FORCE; this.isJumping = true;
                 playerImg.src = JUMP_IMG_URL;
-                playJumpSound();
+                if(sfxEnabled) { jumpSound.currentTime = 0; jumpSound.play().catch(()=>{}); }
             }
         }
         update(dt) {
@@ -522,10 +470,7 @@
             const groundY = canvas.height - GROUND_Y_OFFSET - this.height;
             if (this.y > groundY) {
                 this.y = groundY; this.vy = 0;
-                if (this.isJumping) {
-                    this.isJumping = false;
-                    playerImg.src = RUN_URL;
-                }
+                if (this.isJumping) { this.isJumping = false; playerImg.src = RUN_URL; }
             }
             playerImg.style.transform = `translate3d(${Math.round(this.x)}px, ${Math.round(this.y)}px, 0)`;
             if (playerImg.style.display !== 'block' && (gameState === 'PLAYING' || gameState === 'INTERMISSION')) playerImg.style.display = 'block';
@@ -572,18 +517,14 @@
     function showInstructions() { gameState = 'INSTRUCTIONS'; mainMenu.classList.add('hidden'); instructionsScreen.classList.remove('hidden'); }
 
     function startGame() {
-        // Attempt Fullscreen on mobile landscape
         if (window.innerWidth > window.innerHeight && 'ontouchstart' in window) {
-            const doc = window.document;
-            const docEl = doc.documentElement;
+            const doc = window.document; const docEl = doc.documentElement;
             const requestFS = docEl.requestFullscreen || docEl.webkitRequestFullScreen;
             if (requestFS && !doc.fullscreenElement) requestFS.call(docEl).catch(() => {});
         }
-
-        jumpSound.play().then(() => { jumpSound.pause(); jumpSound.currentTime = 0; }).catch(() => {});
         if (musicEnabled) bgMusic.play().catch(() => {});
         gameState = 'PLAYING'; score = 0; currentLevel = 1; gameSpeed = 6.5; obstacles = []; player.reset();
-        lastTime = performance.now();
+        lastTime = performance.now(); speedParticles = [];
         mainMenu.classList.add('hidden'); creditsScreen.classList.add('hidden'); instructionsScreen.classList.add('hidden');
         gameOverScreen.classList.add('hidden'); intermissionOverlay.style.opacity = '0'; liveStats.classList.remove('hidden');
         scoreVal.textContent = "0"; levelVal.textContent = "1";
@@ -594,13 +535,8 @@
     function startIntermission() {
         gameState = 'INTERMISSION'; intermissionTimer = 180; intermissionOverlay.style.opacity = '1'; obstacles = []; 
         const statusText = document.getElementById('level-status');
-        if (currentLevel === 10) {
-            statusText.textContent = "DIFFICULTY SPIKE!";
-            statusText.style.color = "#ef4444";
-        } else {
-            statusText.textContent = `Stage ${currentLevel} Clear`;
-            statusText.style.color = "#0ea5e9";
-        }
+        if (currentLevel === 10) { statusText.textContent = "DIFFICULTY SPIKE!"; statusText.style.color = "#ef4444"; }
+        else { statusText.textContent = `Stage ${currentLevel} Clear`; statusText.style.color = "#0ea5e9"; }
     }
 
     function gameOver() {
@@ -612,12 +548,66 @@
         finalScoreDisplay.innerText = Math.floor(score); finalLevelDisplay.innerText = currentLevel;
     }
 
+    function drawCloud(x, y) {
+        const rx = Math.round(x);
+        const ry = Math.round(y);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.beginPath();
+        ctx.arc(rx, ry, 25, 0, Math.PI * 2);
+        ctx.arc(rx + 20, ry - 10, 30, 0, Math.PI * 2);
+        ctx.arc(rx + 45, ry, 25, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    function drawTree(x, y) {
+        const s = 1.1; 
+        const rx = Math.round(x);
+        const ry = Math.round(y);
+        ctx.fillStyle = '#78350f'; // Trunk
+        // ry is already offset in draw() to align top, so rx+offset, ry+trunk_offset
+        ctx.fillRect(rx + (10 * s), ry + (20 * s), 12 * s, 35 * s);
+        ctx.fillStyle = '#22c55e'; // Vibrant green
+        ctx.beginPath();
+        ctx.moveTo(rx - (22 * s), ry + (20 * s));
+        ctx.lineTo(rx + (16 * s), ry - (25 * s));
+        ctx.lineTo(rx + (54 * s), ry + (20 * s));
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(rx - (16 * s), ry);
+        ctx.lineTo(rx + (16 * s), ry - (45 * s));
+        ctx.lineTo(rx + (48 * s), ry);
+        ctx.fill();
+    }
+
     function update(dt) {
         if (['MENU', 'CREDITS', 'INSTRUCTIONS'].includes(gameState)) return;
         if (window.innerHeight > window.innerWidth && window.innerWidth <= 1024 && 'ontouchstart' in window) return;
-        
         const cappedDt = Math.min(dt, 3);
         player.update(cappedDt);
+
+        // Continuous tiling update logic
+        parallaxLayers.forEach(layer => {
+            layer.x -= gameSpeed * layer.speed * cappedDt;
+            const wrapAt = layer.type === 'clouds' ? 600 : 380;
+            if (layer.x <= -wrapAt) layer.x += wrapAt;
+        });
+
+        // Speed Lines
+        if (gameState === 'PLAYING') {
+            if (Math.random() < 0.2 * cappedDt) {
+                speedParticles.push({
+                    x: canvas.width,
+                    y: Math.random() * (canvas.height - GROUND_Y_OFFSET - 100) + 50,
+                    w: Math.random() * 50 + 50,
+                    h: 2,
+                    speed: (Math.random() * 5 + 10) * cappedDt
+                });
+            }
+        }
+        for (let i = speedParticles.length - 1; i >= 0; i--) {
+            speedParticles[i].x -= speedParticles[i].speed * gameSpeed * 0.5;
+            if (speedParticles[i].x + speedParticles[i].w < 0) speedParticles.splice(i, 1);
+        }
 
         if (gameState === 'INTERMISSION') {
             intermissionTimer -= cappedDt;
@@ -633,15 +623,11 @@
         if (score >= currentLevel * POINTS_PER_LEVEL) { startIntermission(); return; }
         
         let spawnGap, targetSpeed;
-        if (currentLevel < 5) {
-            targetSpeed = 6.5 + (currentLevel * 0.2);
-            spawnGap = 110 - (currentLevel * 3);
-        } else if (currentLevel < 10) {
-            targetSpeed = 7.5 + ((currentLevel - 4) * 0.6);
-            spawnGap = 95 - ((currentLevel - 4) * 8);
-        } else {
-            targetSpeed = 12.1 + ((currentLevel - 10) * 0.7);
-            spawnGap = Math.max(22, 45 - ((currentLevel - 10) * 3.5));
+        if (currentLevel < 5) { targetSpeed = 6.5 + (currentLevel * 0.2); spawnGap = 110 - (currentLevel * 3); }
+        else if (currentLevel < 10) { targetSpeed = 7.5 + ((currentLevel - 4) * 0.6); spawnGap = 95 - ((currentLevel - 4) * 8); }
+        else {
+            targetSpeed = 11.5 + ((currentLevel - 10) * 0.67);
+            spawnGap = Math.max(24, 47.5 - ((currentLevel - 10) * 3.3));
         }
         
         gameSpeed = targetSpeed;
@@ -656,9 +642,42 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.beginPath(); ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 4;
+        
+        // Ground Y position
         const groundY = Math.round(canvas.height - GROUND_Y_OFFSET);
+
+        // Draw Parallax BG
+        parallaxLayers.forEach(layer => {
+            if (layer.type === 'clouds') {
+                const gap = 600;
+                for (let x = Math.round(layer.x); x < canvas.width + gap; x += gap) {
+                    drawCloud(x, 120);
+                }
+            } else if (layer.type === 'trees') {
+                const gap = 380;
+                // Offset ry so the base (y + 55*s) aligns with groundY
+                // Base at 55*s = 60.5. So ry = groundY - 60.5
+                const ry = groundY - 60.5;
+                for (let x = Math.round(layer.x); x < canvas.width + gap; x += gap) {
+                    drawTree(x, ry);
+                }
+            } else if (layer.type === 'floor') {
+                ctx.strokeStyle = 'rgba(203, 213, 225, 0.4)'; ctx.lineWidth = 1;
+                const gap = 120;
+                for (let x = Math.round(layer.x % gap); x < canvas.width + gap; x += gap) {
+                    ctx.beginPath(); ctx.moveTo(x, groundY); ctx.lineTo(x - 90, canvas.height); ctx.stroke();
+                }
+            }
+        });
+
+        // Speed Streaks
+        ctx.fillStyle = 'rgba(14, 165, 233, 0.1)';
+        speedParticles.forEach(p => ctx.fillRect(Math.round(p.x), Math.round(p.y), p.w, p.h));
+
+        // Ground Line
+        ctx.beginPath(); ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 4;
         ctx.moveTo(0, groundY); ctx.lineTo(canvas.width, groundY); ctx.stroke();
+
         if (['PLAYING', 'INTERMISSION', 'GAMEOVER'].includes(gameState)) {
             obstacles.forEach(obs => obs.draw());
         }
@@ -668,8 +687,7 @@
         if (!lastTime) lastTime = timestamp;
         const dt = (timestamp - lastTime) / 16.67;
         lastTime = timestamp;
-        update(dt); 
-        draw();
+        update(dt); draw();
         if (['PLAYING', 'INTERMISSION', 'GAMEOVER'].includes(gameState)) animationId = requestAnimationFrame(gameLoop);
     }
 
@@ -682,14 +700,7 @@
     window.addEventListener('mousedown', handleAction); 
     window.addEventListener('touchstart', handleAction);
     window.addEventListener('resize', () => { resize(); if (gameState === 'MENU') draw(); });
-
-    function checkReady() {
-        if (playerImg.complete) { 
-            loaderText.classList.add('hidden'); 
-            startBtnContainer.classList.remove('hidden'); 
-        } else setTimeout(checkReady, 500);
-    }
-    window.onload = () => { resize(); checkReady(); draw(); };
+    window.onload = () => { resize(); startBtnContainer.classList.remove('hidden'); loaderText.classList.add('hidden'); draw(); };
 </script>
 </body>
 </html>
