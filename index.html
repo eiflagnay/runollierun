@@ -31,6 +31,14 @@
             background: #ffffff;
         }
 
+        #player-gif {
+            position: absolute;
+            pointer-events: none;
+            z-index: 10;
+            display: none;
+            image-rendering: pixelated; /* Optional: keeps it crisp if it's pixel art */
+        }
+
         .ui-overlay {
             position: absolute;
             top: 0;
@@ -86,12 +94,6 @@
             font-weight: 800;
             color: #1e293b;
         }
-
-        .url-input-area {
-            margin-top: 1rem;
-            font-size: 0.8rem;
-            color: #64748b;
-        }
     </style>
 </head>
 <body>
@@ -99,10 +101,13 @@
 <div id="game-container">
     <canvas id="gameCanvas"></canvas>
     
+    <!-- This IMG tag handles the actual GIF animation -->
+    <img id="player-gif" alt="player-animation">
+    
     <div class="ui-overlay" id="loading-screen">
         <div class="menu-card">
             <h1 class="text-3xl font-bold text-slate-800 mb-2">GRAD DASH</h1>
-            <p class="text-slate-500 mb-6 italic">GIF Edition</p>
+            <p class="text-slate-500 mb-6 italic">Animated GIF Edition</p>
             <div id="loader-text" class="text-sky-600 font-bold animate-pulse mb-4">PREPARING ASSETS...</div>
             <button id="start-btn" class="btn hidden" onclick="startGame()">START CLASS</button>
         </div>
@@ -128,6 +133,7 @@
 
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
+    const playerGif = document.getElementById('player-gif');
     const loadingScreen = document.getElementById('loading-screen');
     const gameOverScreen = document.getElementById('game-over');
     const liveScore = document.getElementById('live-score');
@@ -135,10 +141,9 @@
     const startBtn = document.getElementById('start-btn');
     const loaderText = document.getElementById('loader-text');
 
-    // Setup Character Image
-    const charImg = new Image();
-    // Default fallback if URL is empty
-    charImg.src = GIF_URL || "https://img.icons8.com/color/144/graduation-cap.png";
+    // Setup GIF source
+    const finalSrc = GIF_URL || "https://img.icons8.com/color/144/graduation-cap.png";
+    playerGif.src = finalSrc;
 
     let animationId;
     let gameState = 'LOADING';
@@ -160,6 +165,11 @@
             this.y = canvas.height - GROUND_Y_OFFSET - this.height;
             this.vy = 0;
             this.isJumping = false;
+            
+            // Sync initial style
+            playerGif.style.width = `${this.width}px`;
+            playerGif.style.height = `${this.height}px`;
+            playerGif.style.display = 'none';
         }
         jump() {
             if (!this.isJumping) {
@@ -176,22 +186,17 @@
                 this.vy = 0;
                 this.isJumping = false;
             }
+
+            // Sync GIF position with internal logic
+            const scaleY = this.isJumping ? 1.08 : 1.0;
+            const scaleX = 2 - scaleY;
+            
+            playerGif.style.transform = `translate(${this.x}px, ${this.y}px) scale(${scaleX}, ${scaleY})`;
+            playerGif.style.display = (gameState === 'PLAYING') ? 'block' : 'none';
         }
         draw() {
-            ctx.save();
-            const scaleY = this.isJumping ? 1.08 : 1.0;
-            ctx.translate(this.x + this.width / 2, this.y + this.height);
-            ctx.scale(2 - scaleY, scaleY);
-            
-            // Draw GIF/Image
-            if (charImg.complete) {
-                ctx.drawImage(charImg, -this.width / 2, -this.height, this.width, this.height);
-            } else {
-                // Temporary circle while loading
-                ctx.fillStyle = "#e2e8f0";
-                ctx.beginPath(); ctx.arc(0, -this.height/2, 40, 0, Math.PI*2); ctx.fill();
-            }
-            ctx.restore();
+            // Player is now drawn via DOM element (playerGif) to allow GIF animation
+            // No need for ctx.drawImage here
         }
     }
 
@@ -235,6 +240,7 @@
         gameState = 'GAMEOVER';
         liveScore.classList.add('hidden');
         gameOverScreen.classList.remove('hidden');
+        playerGif.style.display = 'none';
         finalScoreDisplay.innerText = Math.floor(score);
     }
 
@@ -284,7 +290,7 @@
     window.addEventListener('resize', resize);
 
     function checkReady() {
-        if (charImg.complete) {
+        if (playerGif.complete) {
             loaderText.innerText = "READY FOR CLASS!";
             startBtn.classList.remove('hidden');
         } else {
