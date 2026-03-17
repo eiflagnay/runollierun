@@ -75,14 +75,59 @@
             scrollbar-width: thin;
         }
 
-        /* Landscape Optimization */
+        /* Container to allow side-by-side layout in landscape */
+        .menu-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* Landscape Optimization for mobile browsers */
         @media (max-height: 450px) {
-            .menu-card { padding: 1rem 1.5rem; border-radius: 1.5rem; }
-            .menu-card h1 { font-size: 1.5rem !important; margin-bottom: 0.25rem !important; }
+            .menu-card { 
+                padding: 1rem 2rem; 
+                border-radius: 1.5rem; 
+                width: 650px !important;
+                max-width: 95vw;
+            }
+            
+            .menu-content-wrapper {
+                flex-direction: row !important;
+                justify-content: space-between;
+                gap: 2rem;
+                text-align: left;
+            }
+
+            .logo-section {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .buttons-section {
+                flex: 1;
+                width: 100%;
+            }
+
+            .menu-card h1 { font-size: 1.5rem !important; margin-bottom: 0.1rem !important; }
             .menu-card h2 { font-size: 1.25rem !important; margin-bottom: 0.5rem !important; }
-            .menu-card p { font-size: 0.7rem !important; margin-bottom: 0.5rem !important; }
-            .menu-card img { width: 60px !important; margin-bottom: 0.5rem !important; }
-            .btn { padding: 0.5rem 1rem !important; font-size: 0.75rem !important; }
+            .menu-card p { font-size: 0.7rem !important; margin-bottom: 0.25rem !important; }
+            
+            /* Logo is now much bigger in landscape side-by-side */
+            .menu-card .main-logo { 
+                width: 140px !important; 
+                margin-bottom: 0.5rem !important; 
+            }
+
+            .btn { 
+                padding: 0.6rem 1rem !important; 
+                font-size: 0.75rem !important;
+                margin-bottom: 0.5rem;
+            }
+
             .stats-container, .settings-container { top: 10px !important; }
             #final-grade-text { font-size: 3rem !important; line-height: 1 !important; }
             #final-grade-container { margin-bottom: 0.5rem !important; }
@@ -211,14 +256,19 @@
 
     <div class="ui-overlay" id="main-menu">
         <div class="menu-card">
-            <img src="https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/Game%20Logo.png" alt="Run Ollie Run Logo" class="w-32 mx-auto mb-4 drop-shadow-md">
-            <h1 class="text-3xl font-black text-slate-800 mb-1">RUN OLLIE RUN</h1>
-            <p class="text-slate-500 mb-8 italic text-sm">run and jump to success</p>
-            <div id="loader-text" class="text-sky-600 font-bold animate-pulse mb-4 text-sm">PREPARING LESSON...</div>
-            <div id="menu-actions" class="hidden flex flex-col gap-3">
-                <button class="btn text-sm" onclick="startGame()">START CLASS</button>
-                <button class="btn btn-secondary text-sm" onclick="showInstructions()">HOW TO PLAY</button>
-                <button class="btn btn-secondary text-sm" onclick="showCredits()">CREDITS</button>
+            <div class="menu-content-wrapper">
+                <div class="logo-section">
+                    <img src="https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/Game%20Logo.png" alt="Run Ollie Run Logo" class="main-logo w-32 mx-auto mb-4 drop-shadow-md">
+                    <h1 class="text-3xl font-black text-slate-800 mb-1">RUN OLLIE RUN</h1>
+                    <p class="text-slate-500 mb-2 italic text-sm">run and jump to success</p>
+                    <div id="loader-text" class="text-sky-600 font-bold animate-pulse mb-4 text-sm">PREPARING LESSON...</div>
+                </div>
+                
+                <div id="menu-actions" class="buttons-section hidden flex flex-col gap-3">
+                    <button class="btn text-sm" onclick="startGame()">START CLASS</button>
+                    <button class="btn btn-secondary text-sm" onclick="showInstructions()">HOW TO PLAY</button>
+                    <button class="btn btn-secondary text-sm" onclick="showCredits()">CREDITS</button>
+                </div>
             </div>
         </div>
     </div>
@@ -378,14 +428,14 @@
 
         if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
             if (requestFullScreen) {
-                requestFullScreen.call(docEl);
+                requestFullScreen.call(docEl).catch(() => {});
                 enterIcon.classList.add('hidden');
                 exitIcon.classList.remove('hidden');
                 btn.classList.remove('muted');
             }
         } else {
             if (cancelFullScreen) {
-                cancelFullScreen.call(doc);
+                cancelFullScreen.call(doc).catch(() => {});
                 enterIcon.classList.remove('hidden');
                 exitIcon.classList.add('hidden');
                 btn.classList.add('muted');
