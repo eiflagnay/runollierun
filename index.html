@@ -29,8 +29,10 @@
         canvas {
             display: block;
             background: #ffffff;
+            image-rendering: auto;
         }
 
+        /* Ollie DOM element - Using translate3d for high performance animation */
         #player-gif {
             position: absolute;
             top: 0;
@@ -38,9 +40,8 @@
             pointer-events: none;
             z-index: 10;
             display: none;
-            image-rendering: auto;
-            transform-origin: top left;
             will-change: transform;
+            image-rendering: auto;
         }
 
         .ui-overlay {
@@ -55,6 +56,7 @@
             align-items: center;
             pointer-events: none;
             z-index: 50;
+            padding: 10px;
         }
 
         .menu-card {
@@ -65,9 +67,25 @@
             border: 1px solid #e2e8f0;
             text-align: center;
             pointer-events: auto;
-            max-width: 90%;
+            max-width: 95%;
             width: 440px;
+            max-height: 95vh;
+            overflow-y: auto;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            scrollbar-width: thin;
+        }
+
+        /* Landscape Optimization */
+        @media (max-height: 450px) {
+            .menu-card { padding: 1rem 1.5rem; border-radius: 1.5rem; }
+            .menu-card h1 { font-size: 1.5rem !important; margin-bottom: 0.25rem !important; }
+            .menu-card h2 { font-size: 1.25rem !important; margin-bottom: 0.5rem !important; }
+            .menu-card p { font-size: 0.7rem !important; margin-bottom: 0.5rem !important; }
+            .menu-card img { width: 60px !important; margin-bottom: 0.5rem !important; }
+            .btn { padding: 0.5rem 1rem !important; font-size: 0.75rem !important; }
+            .stats-container, .settings-container { top: 10px !important; }
+            #final-grade-text { font-size: 3rem !important; line-height: 1 !important; }
+            #final-grade-container { margin-bottom: 0.5rem !important; }
         }
 
         .btn {
@@ -85,38 +103,12 @@
             width: 100%;
         }
 
-        .btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #0369a1;
-        }
+        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #0369a1; }
+        .btn-secondary { background: #f1f5f9; color: #475569; box-shadow: 0 6px 0 #cbd5e1; }
+        .btn-secondary:active { box-shadow: 0 2px 0 #cbd5e1; }
 
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            box-shadow: 0 6px 0 #cbd5e1;
-        }
-
-        .btn-secondary:active {
-            box-shadow: 0 2px 0 #cbd5e1;
-        }
-
-        .stats-container {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            display: flex;
-            gap: 10px;
-            pointer-events: none;
-        }
-
-        .settings-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 100;
-        }
+        .stats-container { position: absolute; top: 20px; left: 20px; display: flex; gap: 10px; pointer-events: none; }
+        .settings-container { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 100; }
 
         .stat-box, .audio-toggle {
             background: rgba(255,255,255,0.9);
@@ -129,39 +121,13 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
-        .audio-toggle {
-            cursor: pointer;
-            pointer-events: auto;
-            transition: all 0.2s;
-            flex-direction: row;
-            gap: 8px;
-            padding: 10px;
-        }
+        .audio-toggle { cursor: pointer; pointer-events: auto; transition: all 0.2s; flex-direction: row; gap: 8px; padding: 10px; }
+        .audio-toggle:active { transform: scale(0.95); }
+        .audio-toggle.muted { opacity: 0.6; background: #f1f5f9; }
 
-        .audio-toggle:active {
-            transform: scale(0.95);
-        }
+        .stat-label { font-size: 0.6rem; text-transform: uppercase; color: #64748b; font-weight: 700; }
+        .stat-value { font-size: 1.25rem; font-weight: 800; color: #1e293b; line-height: 1; }
 
-        .audio-toggle.muted {
-            opacity: 0.6;
-            background: #f1f5f9;
-        }
-
-        .stat-label {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            color: #64748b;
-            font-weight: 700;
-        }
-
-        .stat-value {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #1e293b;
-            line-height: 1;
-        }
-
-        /* ORIENTATION NOTICE */
         #orientation-notice {
             display: none;
             position: fixed;
@@ -178,10 +144,8 @@
             padding: 20px;
         }
 
-        @media (orientation: portrait) and (max-width: 1024px) {
-            #orientation-notice {
-                display: flex;
-            }
+        @media (orientation: portrait) and (max-width: 1024px) and (pointer: coarse) {
+            #orientation-notice { display: flex; }
         }
 
         #intermission-overlay {
@@ -200,24 +164,12 @@
             transition: opacity 0.5s;
         }
 
-        #level-status {
-            font-size: 3rem;
-            font-weight: 900;
-            color: #0ea5e9;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-
-        #countdown {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #64748b;
-        }
+        #level-status { font-size: 3rem; font-weight: 900; color: #0ea5e9; text-transform: uppercase; margin-bottom: 0.5rem; }
+        #countdown { font-size: 1.5rem; font-weight: 800; color: #64748b; }
     </style>
 </head>
 <body>
 
-<!-- Portrait Lock Notice -->
 <div id="orientation-notice">
     <div class="animate-bounce mb-6">
         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
@@ -226,17 +178,21 @@
     <p class="text-slate-500 italic">Please rotate your device to run and jump to success!</p>
 </div>
 
+<!-- Ollie Image Sources for Canvas (though we use playerImg for animation) -->
+<img id="ollie-run-source" src="https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/OllieRun.webp" crossorigin="anonymous" style="display:none">
+<img id="ollie-jump-source" src="https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/JumpOllie.png" crossorigin="anonymous" style="display:none">
+
 <div id="game-container">
     <canvas id="gameCanvas"></canvas>
     
-    <img id="player-gif" alt="player-animation">
+    <!-- Animated Ollie (DOM element for WebP animation support) -->
+    <img id="player-gif" src="https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/OllieRun.webp" alt="Ollie">
     
     <div id="intermission-overlay">
         <div id="level-status">Stage Complete</div>
         <div id="countdown">Next Stage in 3...</div>
     </div>
 
-    <!-- GLOBAL AUDIO CONTROLS (Top Right) -->
     <div class="settings-container" id="global-settings">
         <div class="audio-toggle" id="toggle-music-btn" title="Toggle Music" onclick="toggleMusic()">
             <svg id="music-on-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-sky-600"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
@@ -248,16 +204,12 @@
         </div>
     </div>
 
-    <!-- MAIN MENU -->
     <div class="ui-overlay" id="main-menu">
         <div class="menu-card">
-            <img src="https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/Game%20Logo.png" alt="Run Ollie Run Logo" class="w-40 mx-auto mb-4 drop-shadow-md">
-            
+            <img src="https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/Game%20Logo.png" alt="Run Ollie Run Logo" class="w-32 mx-auto mb-4 drop-shadow-md">
             <h1 class="text-3xl font-black text-slate-800 mb-1">RUN OLLIE RUN</h1>
-            <p class="text-slate-500 mb-6 italic text-sm">run and jump to success</p>
-            
-            <div id="loader-text" class="text-sky-600 font-bold animate-pulse mb-4 text-sm">PREPARING LESSONS...</div>
-            
+            <p class="text-slate-500 mb-8 italic text-sm">run and jump to success</p>
+            <div id="loader-text" class="text-sky-600 font-bold animate-pulse mb-4 text-sm">PREPARING LESSON...</div>
             <div id="menu-actions" class="hidden flex flex-col gap-3">
                 <button class="btn text-sm" onclick="startGame()">START CLASS</button>
                 <button class="btn btn-secondary text-sm" onclick="showInstructions()">HOW TO PLAY</button>
@@ -266,127 +218,97 @@
         </div>
     </div>
 
-    <!-- INSTRUCTIONS SCREEN -->
     <div class="ui-overlay hidden" id="instructions-screen">
         <div class="menu-card">
             <h2 class="text-xl font-black text-slate-800 mb-4 border-b pb-2">HOW TO PLAY</h2>
-            
             <div class="text-left space-y-4 mb-6">
                 <div class="flex gap-3 items-start">
-                    <div class="bg-sky-100 p-2 rounded-lg text-sky-600 shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-                    </div>
+                    <div class="bg-sky-100 p-2 rounded-lg text-sky-600 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></div>
                     <div>
                         <p class="font-bold text-slate-800 text-sm">Jump to Dodge</p>
-                        <p class="text-xs text-slate-500">Tap the screen, or use <b>SPACE/UP</b> to leap over incoming grades.</p>
+                        <p class="text-xs text-slate-500">Tap screen, or use <b>SPACE/UP</b> to leap over incoming grades.</p>
                     </div>
                 </div>
-
                 <div class="flex gap-3 items-start">
-                    <div class="bg-amber-100 p-2 rounded-lg text-amber-600 shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-                    </div>
+                    <div class="bg-amber-100 p-2 rounded-lg text-amber-600 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
                     <div>
                         <p class="font-bold text-slate-800 text-sm">Improve Your Grade</p>
-                        <p class="text-xs text-slate-500">Survive through levels to climb from F to the ultimate <b>A+</b> grade!</p>
+                        <p class="text-xs text-slate-500">Survive levels to climb from F to the ultimate <b>A+</b> grade!</p>
+                    </div>
+                </div>
+                <div class="flex gap-3 items-start">
+                    <div class="bg-emerald-100 p-2 rounded-lg text-emerald-600 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9 2 9 2 15 6 15 11 19 11 5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></div>
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">Audio Settings</p>
+                        <p class="text-xs text-slate-500">Use the icons in the <b>top-right</b> to toggle Music and SFX anytime.</p>
                     </div>
                 </div>
             </div>
-
             <button class="btn btn-secondary text-sm" onclick="showMainMenu()">GOT IT</button>
         </div>
     </div>
 
-    <!-- CREDITS SCREEN -->
     <div class="ui-overlay hidden" id="credits-screen">
         <div class="menu-card">
             <h2 class="text-xl font-black text-slate-800 mb-4 border-b pb-2">CREDITS</h2>
-            
-            <div class="text-left space-y-3 mb-6">
-                <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">Character Design</p>
-                    <p class="text-slate-700 font-bold text-sm">Kor Chun Heng</p>
+            <div class="text-left space-y-3 mb-6 text-[11px]">
+                <div class="flex flex-wrap gap-x-4">
+                    <div class="mb-2"><p class="font-bold text-slate-400 uppercase text-[9px]">Character Design</p><p class="text-slate-700 font-bold">Kor Chun Heng</p></div>
+                    <div class="mb-2"><p class="font-bold text-slate-400 uppercase text-[9px]">Vibe Coder</p><p class="text-slate-700 font-bold">Alfie Yang</p></div>
                 </div>
-                <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">Vibe Coder</p>
-                    <p class="text-slate-700 font-bold text-sm">Alfie Yang</p>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">Music</p>
-                    <p class="text-slate-700 font-bold text-sm">"Ollie" by <a href="https://open.spotify.com/artist/1OmoKEJt3I1xxK1RrCYual" target="_blank" class="text-sky-600 underline">Yang Ha-Eun</a></p>
-                </div>
-                
-                <div class="pt-3 border-t border-slate-100">
-                    <p class="text-[10px] font-bold text-sky-600 uppercase mb-1">Good School Learning Hub</p>
-                    <p class="text-[11px] text-slate-600"><b>Call/WA:</b> 9424 4449</p>
-                    <p class="text-[11px] text-slate-600"><b>Website:</b> <a href="https://www.goodschool.com.sg/" target="_blank" class="text-sky-600 underline">www.goodschool.com.sg</a></p>
-                    <p class="text-[11px] text-slate-600"><b>Insta:</b> <a href="https://www.instagram.com/goodschoollearninghub/" target="_blank" class="text-sky-600 underline">@goodschoollearninghub</a></p>
+                <div><p class="font-bold text-slate-400 uppercase text-[9px]">Music</p><p class="text-slate-700 font-bold">"Ollie" by <a href="https://open.spotify.com/artist/1OmoKEJt3I1xxK1RrCYual" target="_blank" class="text-sky-600 underline pointer-events-auto">Yang Ha-Eun</a></p></div>
+                <div class="pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
+                    <div class="col-span-2"><p class="font-bold text-sky-600 uppercase text-[9px]">Good School Learning Hub</p></div>
+                    <p><b>Call/WA:</b> 9424 4449</p>
+                    <p><b>Web:</b> <a href="https://www.goodschool.com.sg/" target="_blank" class="text-sky-600 underline pointer-events-auto">goodschool.com.sg</a></p>
+                    <p class="col-span-2"><b>Insta:</b> <a href="https://www.instagram.com/goodschoollearninghub/" target="_blank" class="text-sky-600 underline pointer-events-auto">@goodschoollearninghub</a></p>
                 </div>
             </div>
-
             <button class="btn btn-secondary text-sm" onclick="showMainMenu()">BACK</button>
         </div>
     </div>
 
-    <!-- GAME OVER SCREEN -->
     <div class="ui-overlay hidden" id="game-over">
         <div class="menu-card">
             <h2 class="text-2xl font-bold text-slate-800 mb-2">Study Break!</h2>
-            
             <div id="final-grade-container" class="mb-4">
                 <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Grade Attained</p>
-                <div id="final-grade-text" class="text-6xl font-black mb-1">F</div>
-                <p id="final-congrats" class="text-slate-600 font-medium italic px-4 text-xs">Work harder, you can do this!</p>
+                <div id="final-grade-text" class="text-5xl font-black mb-1">F</div>
+                <p id="final-congrats" class="text-slate-600 font-medium italic px-4 text-[10px] leading-tight">Work harder, you can do this!</p>
             </div>
-
             <div class="flex justify-center gap-6 mb-4 border-t border-slate-100 pt-3">
-                <div class="text-center">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase">Level</p>
-                    <p class="text-xl font-black text-slate-700" id="final-level">1</p>
-                </div>
-                <div class="text-center">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase">Score</p>
-                    <p class="text-xl font-black text-sky-600" id="final-score">0</p>
-                </div>
+                <div class="text-center"><p class="text-[10px] text-slate-400 font-bold uppercase">Level</p><p class="text-xl font-black text-slate-700" id="final-level">1</p></div>
+                <div class="text-center"><p class="text-[10px] text-slate-400 font-bold uppercase">Score</p><p class="text-xl font-black text-sky-600" id="final-score">0</p></div>
             </div>
-            
-            <div class="flex flex-col gap-2">
-                <button class="btn text-sm" onclick="startGame()">TRY AGAIN</button>
-                <button class="btn btn-secondary text-sm" onclick="showMainMenu()">MAIN MENU</button>
+            <div class="grid grid-cols-2 gap-2">
+                <button class="btn text-xs py-2" onclick="startGame()">TRY AGAIN</button>
+                <button class="btn btn-secondary text-xs py-2" onclick="showMainMenu()">MENU</button>
             </div>
         </div>
     </div>
 
     <div class="stats-container hidden" id="live-stats">
-        <div class="stat-box">
-            <span class="stat-label">Level</span>
-            <span class="stat-value" id="level-val">1</span>
-        </div>
-        <div class="stat-box">
-            <span class="stat-label">Score</span>
-            <span class="stat-value" id="score-val">0</span>
-        </div>
+        <div class="stat-box"><span class="stat-label">Level</span><span class="stat-value" id="level-val">1</span></div>
+        <div class="stat-box"><span class="stat-label">Score</span><span class="stat-value" id="score-val">0</span></div>
     </div>
 </div>
 
 <script>
-    const GIF_URL = "https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/OllieRun.webp"; 
-    const JUMP_URL = "https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/JumpOllie.png";
+    const RUN_URL = "https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/OllieRun.webp";
+    const JUMP_IMG_URL = "https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/JumpOllie.png";
     const JUMP_SOUND_URL = "https://raw.githubusercontent.com/eiflagnay/runollierun/main/JumpSFX.wav";
     const BG_MUSIC_URL = "https://raw.githubusercontent.com/eiflagnay/runollierun/refs/heads/main/RunOllieRun.mp3";
 
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const playerGif = document.getElementById('player-gif');
+    const playerImg = document.getElementById('player-gif');
     
-    // Screens
+    // UI elements
     const mainMenu = document.getElementById('main-menu');
     const creditsScreen = document.getElementById('credits-screen');
     const instructionsScreen = document.getElementById('instructions-screen');
     const gameOverScreen = document.getElementById('game-over');
     const intermissionOverlay = document.getElementById('intermission-overlay');
-    
-    // UI Elements
     const liveStats = document.getElementById('live-stats');
     const scoreVal = document.getElementById('score-val');
     const levelVal = document.getElementById('level-val');
@@ -397,10 +319,6 @@
     const startBtnContainer = document.getElementById('menu-actions');
     const loaderText = document.getElementById('loader-text');
 
-    const jumpImg = new Image();
-    jumpImg.src = JUMP_URL;
-
-    // AUDIO STATE
     let musicEnabled = true;
     let sfxEnabled = true;
 
@@ -412,24 +330,19 @@
     bgMusic.crossOrigin = "anonymous";
     bgMusic.loop = true;
     bgMusic.volume = 0.5;
-    bgMusic.preload = "auto";
 
     function toggleMusic() {
         musicEnabled = !musicEnabled;
         const onIcon = document.getElementById('music-on-icon');
         const offIcon = document.getElementById('music-off-icon');
         const btn = document.getElementById('toggle-music-btn');
-
         if (musicEnabled) {
-            onIcon.classList.remove('hidden');
-            offIcon.classList.add('hidden');
+            onIcon.classList.remove('hidden'); offIcon.classList.add('hidden');
             btn.classList.remove('muted');
-            if (gameState !== 'LOADING' && gameState !== 'MENU' && gameState !== 'CREDITS' && gameState !== 'INSTRUCTIONS') bgMusic.play().catch(() => {});
+            if (gameState !== 'LOADING' && gameState !== 'MENU') bgMusic.play().catch(() => {});
         } else {
-            onIcon.classList.add('hidden');
-            offIcon.classList.remove('hidden');
-            btn.classList.add('muted');
-            bgMusic.pause();
+            onIcon.classList.add('hidden'); offIcon.classList.remove('hidden');
+            btn.classList.add('muted'); bgMusic.pause();
         }
     }
 
@@ -438,51 +351,36 @@
         const onIcon = document.getElementById('sfx-on-icon');
         const offIcon = document.getElementById('sfx-off-icon');
         const btn = document.getElementById('toggle-sfx-btn');
-
         if (sfxEnabled) {
-            onIcon.classList.remove('hidden');
-            offIcon.classList.add('hidden');
+            onIcon.classList.remove('hidden'); offIcon.classList.add('hidden');
             btn.classList.remove('muted');
         } else {
-            onIcon.classList.add('hidden');
-            offIcon.classList.remove('hidden');
+            onIcon.classList.add('hidden'); offIcon.classList.remove('hidden');
             btn.classList.add('muted');
         }
     }
 
     function playJumpSound() {
         if (!sfxEnabled || !jumpSound) return;
-        jumpSound.pause();
-        jumpSound.currentTime = 0;
-        jumpSound.play().catch(e => console.warn("Jump audio issue:", e.message));
+        jumpSound.pause(); jumpSound.currentTime = 0;
+        jumpSound.play().catch(e => {});
     }
 
-    playerGif.src = GIF_URL;
+    let animationId, gameState = 'MENU', score = 0, currentLevel = 1, gameSpeed = 6.5, obstacles = [], intermissionTimer = 0;
+    let lastTime = 0, spawnCounter = 0, uiUpdateCounter = 0;
 
-    let animationId;
-    let gameState = 'MENU'; 
-    let score = 0;
-    let currentLevel = 1;
-    let gameSpeed = 6;
-    let frameCount = 0;
-    let obstacles = [];
-    let intermissionTimer = 0;
-
-    const GRAVITY = 0.65;
-    const JUMP_FORCE = -15.5;
-    const GROUND_Y_OFFSET = 120;
-    const POINTS_PER_LEVEL = 150; 
+    const GRAVITY = 0.65, JUMP_FORCE = -15.5, GROUND_Y_OFFSET = 120, POINTS_PER_LEVEL = 150; 
 
     function getGradeInfo(level) {
         const grades = {
-            F: { text: "F", color: "#ef4444", width: 45, msgs: ["Work harder! Success is a ladder you must climb.", "Don't give up! Every failure is a step toward success.", "Believe in yourself! You have what it takes to improve.", "Mistakes are lessons. Learn from this one!", "A fresh start is just a click away. Try again!"] },
-            E: { text: "E", color: "#f97316", width: 45, msgs: ["Focus more! You're just getting started.", "Keep pushing! You're breaking through the basics.", "Stay determined. Progress is happening!", "Every scholar starts somewhere. Keep going.", "You've got the foundation, now build on it!"] },
-            D: { text: "D", color: "#f59e0b", width: 45, msgs: ["Keep practicing! You're moving in the right direction.", "Getting better! Your effort is starting to show.", "Consistency is key. You're climbing the ranks!", "Not bad! Let's aim for a C next time.", "You've got rhythm now. Stay focused!"] },
-            C: { text: "C", color: "#fbbf24", width: 45, msgs: ["Solid effort! Now aim for the Dean's List.", "You're halfway to perfection! Great job.", "A solid average, but we know you can be extraordinary!", "You've mastered the core. Time to shine!", "Keep that momentum going. You're doing great!"] },
-            B: { text: "B", color: "#84cc16", width: 45, msgs: ["Good job! A little more study and you'll hit an A.", "Impressive! You're clearly putting in the work.", "So close to excellence! One more push!", "You're outperforming the crowd. Keep it up.", "Academic excellence is right around the corner!"] },
-            A: { text: "A", color: "#10b981", width: 45, msgs: ["Excellent! You are truly a scholar.", "Brilliant performance! You make it look easy.", "Top-tier work! Your dedication is inspiring.", "You've reached the heights of academia!", "Simply outstanding. A true role model!"] },
-            A_MINUS: { text: "A-", color: "#06b6d4", width: 60, msgs: ["Outstanding! Perfection is within your reach.", "Almost perfect! Your skills are sharp.", "Exceptional talent on display here.", "You're in the elite tier now. Keep at it!", "Incredible focus. You're nearly at the top!"] },
-            A_PLUS: { text: "A+", color: "#8b5cf6", width: 65, msgs: ["Masterpiece! You've conquered the curriculum!", "Absolute perfection! There is nothing left to teach you.", "Legendary status attained! The ultimate scholar.", "You've transcended the limits of the game!", "Perfection personified. You are the Grad Master!"] }
+            F: { text: "F", color: "#ef4444", msgs: ["Work harder! Success is a ladder.", "Don't give up!", "Mistakes are lessons."] },
+            E: { text: "E", color: "#f97316", msgs: ["Focus more!", "Keep pushing!"] },
+            D: { text: "D", color: "#f59e0b", msgs: ["Keep practicing!", "Getting better!"] },
+            C: { text: "C", color: "#fbbf24", msgs: ["Solid effort!", "Aiming higher!"] },
+            B: { text: "B", color: "#84cc16", msgs: ["Good job! Almost an A.", "Impressive work!"] },
+            A: { text: "A", color: "#10b981", msgs: ["Excellent! Truly a scholar.", "Brilliant!"] },
+            A_MINUS: { text: "A-", color: "#06b6d4", msgs: ["Outstanding!", "Elite skills!"] },
+            A_PLUS: { text: "A+", color: "#8b5cf6", msgs: ["Masterpiece!", "Absolute perfection!"] }
         };
         if (level <= 2) return grades.F;
         if (level <= 4) return grades.E;
@@ -497,81 +395,62 @@
     class Player {
         constructor() { this.reset(); }
         reset() {
-            this.width = 100;
-            this.height = 100;
-            this.x = 100;
+            this.width = 100; this.height = 100; this.x = 100;
             this.y = canvas.height - GROUND_Y_OFFSET - this.height;
-            this.vy = 0;
-            this.isJumping = false;
-            playerGif.src = GIF_URL;
-            playerGif.style.width = `${this.width}px`;
-            playerGif.style.height = `${this.height}px`;
-            playerGif.style.display = 'none';
+            this.vy = 0; this.isJumping = false;
+            playerImg.src = RUN_URL;
+            playerImg.style.width = this.width + 'px';
+            playerImg.style.height = this.height + 'px';
+            playerImg.style.display = 'none';
         }
         jump() {
             if (!this.isJumping && (gameState === 'PLAYING' || gameState === 'INTERMISSION')) {
-                this.vy = JUMP_FORCE;
-                this.isJumping = true;
-                playerGif.src = JUMP_URL;
+                this.vy = JUMP_FORCE; this.isJumping = true;
+                playerImg.src = JUMP_IMG_URL;
                 playJumpSound();
             }
         }
-        update() {
-            this.vy += GRAVITY;
-            this.y += this.vy;
+        update(dt) {
+            if (isNaN(dt)) return;
+            this.vy += GRAVITY * dt;
+            this.y += this.vy * dt;
             const groundY = canvas.height - GROUND_Y_OFFSET - this.height;
             if (this.y > groundY) {
-                this.y = groundY;
-                this.vy = 0;
+                this.y = groundY; this.vy = 0;
                 if (this.isJumping) {
                     this.isJumping = false;
-                    playerGif.src = GIF_URL;
+                    playerImg.src = RUN_URL;
                 }
             }
-            const scaleY = this.isJumping ? 1.08 : 1.0;
-            const scaleX = 2 - scaleY;
-            playerGif.style.transform = `translate3d(${this.x}px, ${this.y}px, 0) scale(${scaleX}, ${scaleY})`;
-            if (playerGif.style.display !== 'block' && (gameState === 'PLAYING' || gameState === 'INTERMISSION')) {
-                playerGif.style.display = 'block';
-            }
+            playerImg.style.transform = `translate3d(${Math.round(this.x)}px, ${Math.round(this.y)}px, 0)`;
+            if (playerImg.style.display !== 'block' && (gameState === 'PLAYING' || gameState === 'INTERMISSION')) playerImg.style.display = 'block';
         }
     }
 
     class Obstacle {
         constructor(level) {
-            const gradeInfo = getGradeInfo(level);
-            this.text = gradeInfo.text;
-            this.color = gradeInfo.color;
-            this.width = gradeInfo.width;
-            this.height = 50; 
-            this.x = canvas.width;
+            const info = getGradeInfo(level);
+            this.text = info.text; this.color = info.color; this.width = 50;
+            this.height = 50; this.x = canvas.width;
             this.y = canvas.height - GROUND_Y_OFFSET - this.height - 10;
             this.rotation = (Math.random() - 0.5) * 0.2; 
         }
-        update() { this.x -= gameSpeed; }
+        update(dt) { if (!isNaN(dt)) this.x -= gameSpeed * dt; }
         draw() {
             ctx.save();
-            ctx.translate(this.x + this.width/2, this.y + this.height/2);
+            ctx.translate(Math.round(this.x) + this.width/2, Math.round(this.y) + this.height/2);
             ctx.rotate(this.rotation);
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = this.color + "66";
             ctx.fillStyle = this.color;
             ctx.font = "900 50px 'Outfit'";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
+            ctx.textAlign = "center"; ctx.textBaseline = "middle";
             ctx.fillText(this.text, 0, 0);
-            ctx.strokeStyle = this.color;
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(-this.width/2, this.height/2 - 5);
-            ctx.lineTo(this.width/2, this.height/2 - 2);
-            ctx.stroke();
+            ctx.strokeStyle = this.color; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(-this.width/2, this.height/2 - 5); ctx.lineTo(this.width/2, this.height/2 - 2); ctx.stroke();
             ctx.restore();
         }
     }
 
     const player = new Player();
-
     function resize() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -579,202 +458,133 @@
     }
 
     function showMainMenu() {
-        gameState = 'MENU';
-        mainMenu.classList.remove('hidden');
-        creditsScreen.classList.add('hidden');
-        instructionsScreen.classList.add('hidden');
-        gameOverScreen.classList.add('hidden');
-        liveStats.classList.add('hidden');
-        playerGif.style.display = 'none';
-        obstacles = [];
-        draw();
+        gameState = 'MENU'; mainMenu.classList.remove('hidden'); creditsScreen.classList.add('hidden');
+        instructionsScreen.classList.add('hidden'); gameOverScreen.classList.add('hidden'); liveStats.classList.add('hidden');
+        playerImg.style.display = 'none'; obstacles = []; lastTime = 0; draw();
     }
 
-    function showCredits() {
-        gameState = 'CREDITS';
-        mainMenu.classList.add('hidden');
-        creditsScreen.classList.remove('hidden');
-    }
-
-    function showInstructions() {
-        gameState = 'INSTRUCTIONS';
-        mainMenu.classList.add('hidden');
-        instructionsScreen.classList.remove('hidden');
-    }
+    function showCredits() { gameState = 'CREDITS'; mainMenu.classList.add('hidden'); creditsScreen.classList.remove('hidden'); }
+    function showInstructions() { gameState = 'INSTRUCTIONS'; mainMenu.classList.add('hidden'); instructionsScreen.classList.remove('hidden'); }
 
     function startGame() {
-        jumpSound.play().then(() => {
-            jumpSound.pause();
-            jumpSound.currentTime = 0;
-        }).catch(e => {});
-
-        if (musicEnabled) {
-            bgMusic.play().catch(e => {});
-        }
-
-        gameState = 'PLAYING';
-        score = 0;
-        currentLevel = 1;
-        gameSpeed = 6.5;
-        obstacles = [];
-        player.reset();
-        
-        mainMenu.classList.add('hidden');
-        creditsScreen.classList.add('hidden');
-        instructionsScreen.classList.add('hidden');
-        gameOverScreen.classList.add('hidden');
-        intermissionOverlay.style.opacity = '0';
-        liveStats.classList.remove('hidden');
-        
-        scoreVal.textContent = "0";
-        levelVal.textContent = "1";
-        
+        jumpSound.play().then(() => { jumpSound.pause(); jumpSound.currentTime = 0; }).catch(() => {});
+        if (musicEnabled) bgMusic.play().catch(() => {});
+        gameState = 'PLAYING'; score = 0; currentLevel = 1; gameSpeed = 6.5; obstacles = []; player.reset();
+        lastTime = performance.now();
+        mainMenu.classList.add('hidden'); creditsScreen.classList.add('hidden'); instructionsScreen.classList.add('hidden');
+        gameOverScreen.classList.add('hidden'); intermissionOverlay.style.opacity = '0'; liveStats.classList.remove('hidden');
+        scoreVal.textContent = "0"; levelVal.textContent = "1";
         if (animationId) cancelAnimationFrame(animationId);
-        gameLoop();
+        animationId = requestAnimationFrame(gameLoop);
     }
 
     function startIntermission() {
-        gameState = 'INTERMISSION';
-        intermissionTimer = 180; 
-        intermissionOverlay.style.opacity = '1';
-        obstacles = []; 
-        const levelStatusText = document.getElementById('level-status');
-        if (currentLevel >= 9 && currentLevel <= 10) {
-            levelStatusText.textContent = "DIFFICULTY SPIKE!";
-            levelStatusText.style.color = "#ef4444";
+        gameState = 'INTERMISSION'; intermissionTimer = 180; intermissionOverlay.style.opacity = '1'; obstacles = []; 
+        const statusText = document.getElementById('level-status');
+        
+        // Re-enabled Difficulty Spike text for Level 10
+        if (currentLevel === 10) {
+            statusText.textContent = "DIFFICULTY SPIKE!";
+            statusText.style.color = "#ef4444";
         } else {
-            levelStatusText.textContent = `Stage ${currentLevel} Clear`;
-            levelStatusText.style.color = "#0ea5e9";
+            statusText.textContent = `Stage ${currentLevel} Clear`;
+            statusText.style.color = "#0ea5e9";
         }
-    }
-
-    function endIntermission() {
-        currentLevel++;
-        gameState = 'PLAYING';
-        intermissionOverlay.style.opacity = '0';
-        levelVal.textContent = currentLevel;
-        obstacles = []; 
     }
 
     function gameOver() {
-        gameState = 'GAMEOVER';
-        liveStats.classList.add('hidden');
-        gameOverScreen.classList.remove('hidden');
-        playerGif.style.display = 'none';
-        
+        gameState = 'GAMEOVER'; liveStats.classList.add('hidden'); gameOverScreen.classList.remove('hidden');
+        playerImg.style.display = 'none';
         const info = getGradeInfo(currentLevel);
-        finalGradeText.innerText = info.text;
-        finalGradeText.style.color = info.color;
-        
-        const randomIdx = Math.floor(Math.random() * info.msgs.length);
-        finalCongrats.innerText = info.msgs[randomIdx];
-
-        finalScoreDisplay.innerText = Math.floor(score);
-        finalLevelDisplay.innerText = currentLevel;
+        finalGradeText.innerText = info.text; finalGradeText.style.color = info.color;
+        finalCongrats.innerText = info.msgs[Math.floor(Math.random() * info.msgs.length)];
+        finalScoreDisplay.innerText = Math.floor(score); finalLevelDisplay.innerText = currentLevel;
     }
 
-    function update() {
-        if (gameState === 'MENU' || gameState === 'CREDITS' || gameState === 'INSTRUCTIONS') return;
+    function update(dt) {
+        if (['MENU', 'CREDITS', 'INSTRUCTIONS'].includes(gameState)) return;
+        if (window.innerHeight > window.innerWidth && window.innerWidth <= 1024 && 'ontouchstart' in window) return;
         
-        // Don't update logic if orientation is portrait on small screens
-        if (window.innerHeight > window.innerWidth && window.innerWidth <= 1024) return;
+        const cappedDt = Math.min(dt, 3);
+        player.update(cappedDt);
 
-        player.update();
         if (gameState === 'INTERMISSION') {
-            intermissionTimer--;
+            intermissionTimer -= cappedDt;
             const seconds = Math.ceil(intermissionTimer / 60);
-            const countdownText = document.getElementById('countdown');
-            countdownText.textContent = `Next Stage in ${seconds}...`;
-            if (intermissionTimer <= 0) endIntermission();
+            document.getElementById('countdown').textContent = `Next Stage in ${seconds}...`;
+            if (intermissionTimer <= 0) { currentLevel++; gameState = 'PLAYING'; intermissionOverlay.style.opacity = '0'; levelVal.textContent = currentLevel; }
             return;
         }
         if (gameState !== 'PLAYING') return;
-        
-        score += 0.2;
-        scoreVal.textContent = Math.floor(score);
-        if (score >= currentLevel * POINTS_PER_LEVEL) {
-            startIntermission();
-            return;
-        }
-        
-        // Smoothly increase speed
-        if (currentLevel < 10) {
-            gameSpeed = 6.5 + (currentLevel * 0.15); 
-            var spawnGap = 110 - (currentLevel * 2); 
-        } else {
-            const extra = (currentLevel - 10) * 0.5;
-            gameSpeed = 9 + extra; 
-            var spawnGap = Math.max(30, 75 - (extra * 5)); 
-        }
 
-        frameCount++;
-        if (frameCount % Math.floor(spawnGap) === 0) {
-            obstacles.push(new Obstacle(currentLevel));
+        score += 0.2 * cappedDt;
+        if (++uiUpdateCounter >= 5) { scoreVal.textContent = Math.floor(score); uiUpdateCounter = 0; }
+        if (score >= currentLevel * POINTS_PER_LEVEL) { startIntermission(); return; }
+        
+        let spawnGap, targetSpeed;
+        
+        if (currentLevel < 5) {
+            targetSpeed = 6.5 + (currentLevel * 0.2);
+            spawnGap = 110 - (currentLevel * 3);
+        } else if (currentLevel < 10) {
+            targetSpeed = 7.5 + ((currentLevel - 4) * 0.6);
+            spawnGap = 95 - ((currentLevel - 4) * 8);
+        } else {
+            // Level 10+ difficulty increased by 10% from previous aggressive version
+            // Base speed for level 10 now starts at 12.1 instead of 11
+            targetSpeed = 12.1 + ((currentLevel - 10) * 0.7);
+            // Base gap for level 10 now starts at 45 instead of 50
+            spawnGap = Math.max(22, 45 - ((currentLevel - 10) * 3.5));
         }
+        
+        gameSpeed = targetSpeed;
+        
+        if ((spawnCounter += cappedDt) >= spawnGap) { obstacles.push(new Obstacle(currentLevel)); spawnCounter = 0; }
+        
         for (let i = obstacles.length - 1; i >= 0; i--) {
-            obstacles[i].update();
-            if (player.x + 30 < obstacles[i].x + obstacles[i].width &&
-                player.x + player.width - 30 > obstacles[i].x &&
-                player.y + 30 < obstacles[i].y + obstacles[i].height &&
-                player.y + player.height - 10 > obstacles[i].y) {
-                gameOver();
-            }
+            obstacles[i].update(cappedDt);
+            if (player.x + 30 < obstacles[i].x + obstacles[i].width && player.x + player.width - 30 > obstacles[i].x &&
+                player.y + 30 < obstacles[i].y + obstacles[i].height && player.y + player.height - 10 > obstacles[i].y) gameOver();
             if (obstacles[i].x < -200) obstacles.splice(i, 1);
         }
     }
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.beginPath();
-        ctx.strokeStyle = '#e2e8f0'; 
-        ctx.lineWidth = 4;
-        ctx.moveTo(0, canvas.height - GROUND_Y_OFFSET);
-        ctx.lineTo(canvas.width, canvas.height - GROUND_Y_OFFSET);
-        ctx.stroke();
-
-        if (gameState !== 'MENU' && gameState !== 'CREDITS' && gameState !== 'INSTRUCTIONS') {
-            for (let i = 0; i < obstacles.length; i++) {
-                obstacles[i].draw();
-            }
+        ctx.beginPath(); ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 4;
+        const groundY = Math.round(canvas.height - GROUND_Y_OFFSET);
+        ctx.moveTo(0, groundY); ctx.lineTo(canvas.width, groundY); ctx.stroke();
+        if (['PLAYING', 'INTERMISSION', 'GAMEOVER'].includes(gameState)) {
+            obstacles.forEach(obs => obs.draw());
         }
     }
 
-    function gameLoop() {
-        update(); 
+    function gameLoop(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        const dt = (timestamp - lastTime) / 16.67;
+        lastTime = timestamp;
+        update(dt); 
         draw();
-        if (gameState === 'PLAYING' || gameState === 'INTERMISSION' || gameState === 'GAMEOVER') {
-            animationId = requestAnimationFrame(gameLoop);
-        }
+        if (['PLAYING', 'INTERMISSION', 'GAMEOVER'].includes(gameState)) animationId = requestAnimationFrame(gameLoop);
     }
 
     const handleAction = (e) => { 
-        if (e && e.target && (e.target.closest('button') || e.target.closest('.audio-toggle') || e.target.closest('a'))) return;
-        player.jump();
+        if (e && e.target && (e.target.closest('button') || e.target.closest('.audio-toggle') || e.target.closest('a'))) return; 
+        player.jump(); 
     };
 
     window.addEventListener('keydown', (e) => { if (e.code === 'Space' || e.code === 'ArrowUp') handleAction(); });
-    window.addEventListener('mousedown', handleAction);
+    window.addEventListener('mousedown', handleAction); 
     window.addEventListener('touchstart', handleAction);
-    window.addEventListener('resize', () => {
-        resize();
-        if (gameState === 'MENU') draw();
-    });
+    window.addEventListener('resize', () => { resize(); if (gameState === 'MENU') draw(); });
 
     function checkReady() {
-        if (playerGif.complete && jumpImg.complete) {
-            loaderText.classList.add('hidden');
-            startBtnContainer.classList.remove('hidden');
-        } else {
-            setTimeout(checkReady, 500);
-        }
+        if (playerImg.complete) { 
+            loaderText.classList.add('hidden'); 
+            startBtnContainer.classList.remove('hidden'); 
+        } else setTimeout(checkReady, 500);
     }
-
-    window.onload = () => {
-        resize();
-        checkReady();
-        draw();
-    };
+    window.onload = () => { resize(); checkReady(); draw(); };
 </script>
 </body>
 </html>
